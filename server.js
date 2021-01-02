@@ -4,7 +4,8 @@ const morgan = require('morgan')
 const connectDB = require('./config/db')
 const colors = require('colors')
 const errorHandler = require('./middleware/error')
-
+const path = require('path')
+const fileupload = require('express-fileupload');
 // Load env vars
 dotenv.config({ path: './config/config.env'});
 
@@ -16,9 +17,15 @@ const app = express();
 // Body parser
 app.use(express.json());
 
+// File uploading
+app.use(fileupload());
+
+//Set static folder
+app.use(express.static(path.join(__dirname, 'public')))
+
 // Route files
 const bootcamps = require('./routes/bootcamps');
-
+const courses = require('./routes/courses');
 
 // Dev logging middleware
 if(process.env.NODE_ENV ==='development') {
@@ -26,6 +33,8 @@ if(process.env.NODE_ENV ==='development') {
 }
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps);
+app.use('/api/v1/courses', courses);
+
 
 app.use(errorHandler)
 
